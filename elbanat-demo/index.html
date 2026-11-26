@@ -26,7 +26,7 @@ html[data-theme="dark"]{
 body{
   min-height:100vh; color:var(--text);
   background:linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg1));
-  background-attachment:fixed; padding:18px 14px 40px;
+  padding:18px 14px 40px;
 }
 .wrap{max-width:1180px;margin:0 auto}
 header{
@@ -109,6 +109,16 @@ html[data-theme="dark"] .loss .warn{color:#ffd08a}
 footer{text-align:center;margin-top:26px;color:var(--text-soft);font-weight:700;font-size:.85rem;line-height:1.9}
 .grid>*,.kpi,.filters .f{min-width:0}
 body{overflow-x:hidden}
+.how .steps{display:flex;gap:14px;flex-wrap:wrap;margin-top:6px}
+.how .step{
+  flex:1;min-width:220px;border-radius:18px;padding:16px 18px;font-weight:800;font-size:1rem;line-height:1.9;
+  background:linear-gradient(135deg,rgba(224,33,138,.10),rgba(255,143,194,.14));border:2px dashed var(--card-border);color:var(--text);
+}
+.how .step b{
+  display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#e0218a,#ff5fa8);color:#fff;margin-left:8px;font-size:1.1rem;
+}
+.how .step span{display:block;font-weight:700;font-size:.85rem;color:var(--text-soft)}
 @media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
 @media(max-width:430px){.kpi .v{font-size:1.35rem}header h1{font-size:1.35rem}.chartbox{height:260px}}
 </style>
@@ -146,6 +156,9 @@ body{overflow-x:hidden}
   <div class="card full"><h2>📈 اتجاه المبيعات على مدار السنة</h2><div class="chartbox tall"><canvas id="trend"></canvas></div></div>
   <div class="card"><h2>🍩 توزيع مبيعات الشهر حسب القسم</h2><div class="chartbox"><canvas id="donut"></canvas></div></div>
   <div class="card"><h2>🏆 أكثر المنتجات مبيعًا هذا الشهر</h2><div class="chartbox"><canvas id="top"></canvas></div></div>
+  <div class="card full"><h2>📊 مبيعات كل يوم في الشهر المختار</h2><div class="chartbox"><canvas id="daily"></canvas></div></div>
+  <div class="card"><h2>🎯 نسبة تحقيق هدف الشهر</h2><div class="chartbox"><canvas id="target"></canvas></div></div>
+  <div class="card"><h2>⚖️ الشهر ده مقابل اللي فات (حسب القسم)</h2><div class="chartbox"><canvas id="compare"></canvas></div></div>
   <div class="loss">
     <h2>⚠️ الخسائر والمرتجعات</h2>
     <div class="stats">
@@ -155,6 +168,14 @@ body{overflow-x:hidden}
     </div>
     <div class="chartbox"><canvas id="lossChart"></canvas></div>
     <div class="warn" id="lWarn"></div>
+  </div>
+  <div class="card full how">
+    <h2>💡 الداشبورد الحقيقية هتبقى شغالة إزاي؟</h2>
+    <div class="steps">
+      <div class="step"><b>١</b>مبيعات المحل بتتسجل أول بأول<span>من الكاشير أو شيت بسيط على الموبايل</span></div>
+      <div class="step"><b>٢</b>الداشبورد بتحدّث أرقامها لوحدها<span>من غير ما تعملي أي حاجة</span></div>
+      <div class="step"><b>٣</b>تفتحيها من موبايلك في أي وقت<span>نفس الشكل اللي قدامك ده بالظبط، بس بأرقام محلك الحقيقية</span></div>
+    </div>
   </div>
 </div>
 
@@ -264,6 +285,69 @@ function buildLoss(){
       scales:{x:{ticks:{color:tc.tick,font:{family:'Cairo'},callback:v=>fmt(v)},grid:{color:tc.grid}},
               y:{ticks:{color:tc.tick,font:{family:'Cairo',weight:'700',size:12}},grid:{display:false}}}}});
 }
+function dailySeries(m, cat){
+  const total = calcMonth(m,cat).sales;
+  const w = [];
+  for(let d=1; d<=30; d++){ w.push(0.6 + Math.abs(Math.sin(d*2.7 + m*1.1)) + (d%7===5 ? 0.9 : 0)); }
+  const sum = w.reduce((a,b)=>a+b,0);
+  return w.map(x=> total*x/sum);
+}
+function buildDaily(){
+  const tc = themeColors();
+  const ctx = document.getElementById('daily').getContext('2d');
+  const g = ctx.createLinearGradient(0,0,0,300);
+  g.addColorStop(0,'#e0218a'); g.addColorStop(1,'#ff9cc9');
+  const labels = []; for(let d=1; d<=30; d++) labels.push(fmt(d));
+  charts.daily = new Chart(ctx,{type:'bar',
+    data:{labels,datasets:[{data:dailySeries(state.month,state.cat),backgroundColor:g,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{rtl:true,textDirection:'rtl',
+        callbacks:{title:c=>'يوم '+c[0].label,label:c=>' '+money(c.parsed.y)}}},
+      scales:{x:{ticks:{color:tc.tick,font:{family:'Cairo'},maxTicksLimit:10},grid:{display:false}},
+              y:{ticks:{color:tc.tick,font:{family:'Cairo'},callback:v=>fmt(v)},grid:{color:tc.grid}}}}});
+}
+const TARGETS = {'الكل':100000,'عناية بالبشرة':40000,'مكياج':30000,'عناية بالشعر':20000,'عطور وبودي':10000};
+const centerTextPlugin = {id:'centerText',afterDraw(chart){
+  const {ctx, chartArea} = chart;
+  const x = (chartArea.left+chartArea.right)/2, y = (chartArea.top+chartArea.bottom)/2;
+  ctx.save();
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle = themeColors().tick;
+  ctx.font = "900 30px Cairo"; ctx.fillText(chart.$pct, x, y-10);
+  ctx.font = "700 13px Cairo"; ctx.fillText('من هدف الشهر', x, y+20);
+  ctx.restore();
+}};
+function buildTarget(){
+  const sales = calcMonth(state.month,state.cat).sales;
+  const t = TARGETS[state.cat];
+  const pct = sales/t*100;
+  const shown = Math.min(100, pct);
+  const ch = new Chart(document.getElementById('target'),{type:'doughnut',
+    data:{labels:['متحقق','باقي'],datasets:[{data:[shown,100-shown],
+      backgroundColor:['#e0218a','rgba(255,194,221,.55)'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'70%',
+      plugins:{legend:{display:false},
+        tooltip:{rtl:true,textDirection:'rtl',callbacks:{
+          label:c=>c.dataIndex===0 ? ' المبيعات: '+money(sales) : ' الهدف: '+money(t)}}}},
+    plugins:[centerTextPlugin]});
+  ch.$pct = pctFmt(pct);
+  charts.target = ch;
+}
+function buildCompare(){
+  const tc = themeColors();
+  const cats = CATS.slice(1);
+  const cur = cats.map(c=>calcMonth(state.month,c).sales);
+  const prev = cats.map(c=> state.month>0 ? calcMonth(state.month-1,c).sales : 0);
+  charts.compare = new Chart(document.getElementById('compare'),{type:'bar',
+    data:{labels:cats,datasets:[
+      {label:'الشهر ده',data:cur,backgroundColor:'#e0218a',borderRadius:10},
+      {label:'الشهر اللي فات',data:prev,backgroundColor:'#ffb3d6',borderRadius:10}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',rtl:true,labels:{color:tc.tick,font:{family:'Cairo',weight:'800'}}},
+        tooltip:{rtl:true,textDirection:'rtl',callbacks:{label:c=>' '+c.dataset.label+': '+money(c.parsed.y)}}},
+      scales:{x:{ticks:{color:tc.tick,font:{family:'Cairo',weight:'700',size:12}},grid:{display:false}},
+              y:{ticks:{color:tc.tick,font:{family:'Cairo'},callback:v=>fmt(v)},grid:{color:tc.grid}}}}});
+}
 function updateKPIs(){
   const cur = calcMonth(state.month,state.cat);
   const prev = state.month>0 ? calcMonth(state.month-1,state.cat) : null;
@@ -305,13 +389,13 @@ function refresh(){
   state.month = +document.getElementById('monthSel').value;
   state.cat = document.getElementById('catSel').value;
   updateKPIs(); updateLossPanel();
-  destroyCharts(); buildTrend(); buildDonut(); buildTop(); buildLoss();
+  destroyCharts(); buildTrend(); buildDonut(); buildTop(); buildLoss(); buildDaily(); buildTarget(); buildCompare();
 }
 function toggleTheme(){
   const h = document.documentElement;
   h.dataset.theme = h.dataset.theme==='dark' ? 'light' : 'dark';
   document.getElementById('themeBtn').textContent = h.dataset.theme==='dark' ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
-  destroyCharts(); buildTrend(); buildDonut(); buildTop(); buildLoss();
+  destroyCharts(); buildTrend(); buildDonut(); buildTop(); buildLoss(); buildDaily(); buildTarget(); buildCompare();
 }
 (function init(){
   const ms = document.getElementById('monthSel');
