@@ -194,6 +194,26 @@ h2.t{letter-spacing:-.01em}
 /* photo as-is */
 .photo img,.aph img{width:100%;height:100%;max-width:none;margin:0;object-fit:cover;object-position:50% 18%}
 .photo .in,.aph .in{background:#cfd6dd;display:block}
+:root{--bg:#120a20;--bg2:#1a1030;--card:#22143b;--line:#3f2766;--em:#ec4899;--em2:#f472b6;--tx:#f6eefb;--mut:#b9a5cf;--navbg:linear-gradient(90deg,#9d2a78,#ec4899 50%,#9d2a78);--ink:#2a0a1e;--glow:rgba(236,72,153,.38)}
+[data-theme=light]{--bg:#fdf5fa;--bg2:#f8e8f2;--card:#fff;--line:#efd3e4;--em:#c81e78;--em2:#c81e78;--tx:#2b1138;--mut:#6b4b7d;--navbg:linear-gradient(90deg,#b21a6c,#ec4899 50%,#b21a6c);--ink:#fff;--glow:rgba(236,72,153,.25)}
+.hero{background:radial-gradient(900px 500px at 15% 0,rgba(236,72,153,.28),transparent 60%),radial-gradient(800px 600px at 90% 80%,rgba(168,85,247,.22),transparent 60%),var(--bg)}
+.photo,.aph{background:conic-gradient(from 200deg,#f9a8d4,#be185d,#f9a8d4,#ec4899,#f9a8d4)}
+.photo::after{border-color:rgba(244,114,182,.5)}
+.stat span+*{}
+.eyebrow,[class*=eyebrow]{border-color:rgba(244,114,182,.45)!important}
+.cc,.pc{}
+/* data-analysis look */
+body{background-image:linear-gradient(rgba(236,72,153,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(236,72,153,.055) 1px,transparent 1px);background-size:44px 44px;background-attachment:fixed}
+section.alt{background-image:linear-gradient(rgba(236,72,153,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(236,72,153,.05) 1px,transparent 1px);background-size:44px 44px}
+.hero::before{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;z-index:0;opacity:.55;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' x2='0' y1='0' y2='1'><stop offset='0' stop-color='%23ec4899' stop-opacity='.45'/><stop offset='1' stop-color='%23ec4899' stop-opacity='0'/></linearGradient></defs><path d='M0 240 L100 210 L200 225 L300 170 L400 190 L500 120 L600 150 L700 90 L800 115 L900 60 L1000 85 L1100 30 L1200 50 L1200 300 L0 300Z' fill='url(%23g)'/><path d='M0 240 L100 210 L200 225 L300 170 L400 190 L500 120 L600 150 L700 90 L800 115 L900 60 L1000 85 L1100 30 L1200 50' fill='none' stroke='%23f472b6' stroke-width='3'/></svg>") bottom/100% 100% no-repeat}
+.t.disp::after{content:"";display:block;margin-top:12px;width:92px;height:34px;background:linear-gradient(var(--em),var(--em)) 0 100%/12px 40%,linear-gradient(var(--em2),var(--em2)) 20px 100%/12px 70%,linear-gradient(var(--em),var(--em)) 40px 100%/12px 55%,linear-gradient(var(--em2),var(--em2)) 60px 100%/12px 100%,linear-gradient(var(--em),var(--em)) 80px 100%/12px 80%;background-repeat:no-repeat;border-radius:3px;opacity:.85}
+.contact .t.disp::after{margin-left:auto;margin-right:auto}
+.stat{border-left:4px solid var(--em)}
+.rib.tilt{background:#a8277f;color:#fff0f8}
+.cta{box-shadow:0 8px 24px var(--glow)}
+.tg span{background:rgba(236,72,153,.16)}
+[data-theme=light] .tg span{background:rgba(236,72,153,.12)}
+@media(max-width:900px){.hl{position:relative}}
 </style></head><body>
 <div id="loader"><div class="lg">Habiba<b>.</b>Ahmed</div><div class="disp" style="color:var(--em2)">Data Analyst</div><div class="bar"><i></i></div><button id="skip">Click to skip</button></div>
 <nav><a class="mark" href="#home">Habiba<span style="color:#04201a">.</span></a>
