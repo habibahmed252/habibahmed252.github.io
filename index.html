@@ -256,7 +256,39 @@ section.alt,#projects{position:relative;overflow:hidden}
 @keyframes orb{from{transform:translate(0,0) scale(1)}to{transform:translate(-120px,160px) scale(1.25)}}
 }
 @media (prefers-reduced-motion:reduce){#fx,#spot,#sp{display:none}}
-</style></head><body>
+@media(min-width:901px){
+.hero{min-height:max(100svh,900px)}
+.rib.tilt{bottom:140px}
+.photo{bottom:200px;width:min(44vh,400px)}
+}
+.photo{width:min(40vh,360px)!important}
+#intro{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:22px;background:radial-gradient(900px 500px at 15% 0,rgba(214,59,143,.28),transparent 60%),radial-gradient(800px 600px at 90% 90%,rgba(168,39,127,.3),transparent 60%),#0d0714;cursor:pointer;transition:opacity .7s ease,transform .7s ease,filter .7s ease;animation:introfs .01s 7s forwards}
+#intro.out{opacity:0;transform:scale(1.06);filter:blur(8px);pointer-events:none}
+#intro canvas{display:block;max-width:92vw}
+#intro small{color:rgba(255,200,230,.6);font:500 .85rem 'Lora',serif;letter-spacing:.2em;text-transform:uppercase;opacity:.8}
+@keyframes introfs{to{opacity:0;visibility:hidden;pointer-events:none}}
+</style></head><body><div id="intro"><canvas></canvas><small>Click to skip</small></div><script>(function(){var el=document.getElementById('intro');if(!el)return;
+function fin(){if(el.dataset.d)return;el.dataset.d=1;el.classList.add('out');document.documentElement.style.overflow='';
+setTimeout(function(){el.remove();document.querySelectorAll('.hl h2,.hl p,.hl .avail,.hl .btns').forEach(function(e){e.style.animation='none';e.offsetWidth;e.style.animation=''})},750)}
+if(matchMedia('(prefers-reduced-motion:reduce)').matches){el.remove();return}
+el.addEventListener('click',fin);addEventListener('keydown',fin);el.addEventListener('touchstart',fin,{passive:true});
+document.documentElement.style.overflow='hidden';
+var word='PORTFOLIO',cv=el.querySelector('canvas'),W=Math.min(innerWidth*.9,1100),fs=Math.round(W/6.1),H=Math.round(fs*1.25),dpr=1;
+cv.width=W;cv.height=H;cv.style.width=W+'px';cv.style.height=H+'px';
+var F='700 '+fs+"px Fraunces,Georgia,serif";
+function go(){var o=document.createElement('canvas');o.width=W;o.height=H;var g=o.getContext('2d');g.font=F;g.textBaseline='alphabetic';
+var tw=g.measureText(word).width,x0=(W-tw)/2,xs=[],acc=x0;for(var i=0;i<word.length;i++){var w=g.measureText(word[i]).width;xs.push([acc,w]);acc+=w}
+var gr=g.createLinearGradient(0,0,W,0);gr.addColorStop(0,'#ff9ad0');gr.addColorStop(.5,'#ff5fb0');gr.addColorStop(1,'#d63b8f');g.fillStyle=gr;g.fillText(word,x0,H*.82);
+var c=cv.getContext('2d'),t=document.createElement('canvas'),tc=t.getContext('2d'),st=performance.now(),STEP=140,DUR=520;
+(function fr(now){if(el.dataset.d)return;var T=now-st;c.clearRect(0,0,W,H);
+for(var i=0;i<xs.length;i++){var a=T-i*STEP;if(a<0)continue;var p=Math.min(1,a/DUR),b=Math.max(1,Math.round(30*Math.pow(1-p,1.5)));
+var sx=Math.floor(xs[i][0])-2,sw=Math.ceil(xs[i][1])+4;
+if(b<=1){c.globalAlpha=1;c.drawImage(o,sx,0,sw,H,sx,0,sw,H)}else{var w2=Math.max(1,Math.round(sw/b)),h2=Math.max(1,Math.round(H/b));t.width=w2;t.height=h2;tc.imageSmoothingEnabled=true;tc.drawImage(o,sx,0,sw,H,0,0,w2,h2);c.imageSmoothingEnabled=false;c.globalAlpha=Math.min(1,a/180);c.drawImage(t,0,0,w2,h2,sx,0,w2*b,h2*b)}}
+c.globalAlpha=1;
+if(T>xs.length*STEP+DUR+700){fin();return}requestAnimationFrame(fr)})(st)}
+var done=false;function s(){if(done)return;done=true;go()}
+try{document.fonts.load(F,word).then(s,s)}catch(e){s()}setTimeout(s,700)})();
+</script>
 <div id="loader"><div class="lg">Habiba<b>.</b>Ahmed</div><div class="disp" style="color:var(--em2)">Data Analyst</div><div class="bar"><i></i></div><button id="skip">Click to skip</button></div>
 <nav><a class="mark" href="#home">Habiba<span style="color:#04201a">.</span></a>
 <ul id="links"><li><a href="#home" class="act">Home</a></li><li><a href="#about">About</a></li><li><a href="#skills">Skills</a></li><li><a href="#projects">Projects</a></li><li><a href="#experience">Experience</a></li><li><a href="#certs">Certifications</a></li><li><a href="#contact">Contact</a></li></ul>
