@@ -565,6 +565,10 @@ ul.bl li b{color:#8f1119;font-weight:800}
 #drip{display:none!important}
 #home::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(214,70,120,.28) 2.2px,transparent 2.8px);background-size:26px 26px}
 [data-theme=dark] #home::after{background-image:radial-gradient(circle,rgba(255,127,171,.16) 2px,transparent 2.6px)}
+#drip{display:block!important;position:relative!important;z-index:1!important;height:330px!important;margin:-1px 0 -330px!important;background:none!important;overflow:visible!important}
+#drip::after{display:none!important}
+#home .bigname,#home .photo,#home .hl,#home .soc{z-index:3!important}
+#drip{height:135px!important;margin:-1px 0 -135px!important;overflow:hidden!important}
 </style><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Fraunces:ital,opsz,wght,SOFT,WONK@1,144,650,100,1&family=Bagel+Fat+One&display=swap" rel="stylesheet"></head><body><div id="intro"><canvas></canvas><div class="bw"><div class="sw"><div class="ly"></div><div class="cd"><div class="ph"><img alt=""></div><b>Habiba Ahmed</b><span>Data Analyst</span></div></div></div><div class="sd"><span>Scroll down</span><i></i></div></div>
 <div id="drip" aria-hidden="true"><canvas></canvas></div><script>(function(){var el=document.getElementById('intro');if(!el)return;
 if(matchMedia('(prefers-reduced-motion:reduce)').matches){}
